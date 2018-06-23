@@ -9,7 +9,7 @@ const openstatesParams = {
   search_window: 'session',
   sort: 'updated_at',
   fields: 'bill_id,created_at,updated_at,title,session,action_dates,subjects,actions,versions',
-  // subject: 'Reproductive Issues' // TODO URL for this document, last action
+  subject: 'Reproductive Issues'
 };
 
 const openstatesQuery = () => {
@@ -17,8 +17,6 @@ const openstatesQuery = () => {
     .query(openstatesParams)
     .then(function(response) {
       const shapedBills = response.body.map(bill => shapeBill(bill))
-      // console.log(response);
-      // console.log(response.body);
       console.log(shapedBills);
       return shapedBills;
     });
@@ -33,7 +31,6 @@ const shapeBill = (bill) => {
     last_status: bill.actions[bill.actions.length - 1].action,
     last_updated: bill.updated_at,
     bill_url: shapeBillUrl(bill),
-    // scratch: bill.actions.last.action,
   }
 }
 
@@ -46,4 +43,5 @@ const shapeBillUrl = (bill) => {
   return null;
 }
 
-openstatesQuery();
+const data = openstatesQuery();
+return data;
