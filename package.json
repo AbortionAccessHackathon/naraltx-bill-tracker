@@ -1,0 +1,30 @@
+{
+  "name": "naraltx-bill-tracker",
+  "version": "1.0.0",
+  "description": "query openstates api to get info about certain bills",
+  "main": "openstates_query.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "./openstates_query.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbortionAccessHackathon/naraltx-bill-tracker.git"
+  },
+  "keywords": [
+    "abortion",
+    "access",
+    "states"
+  ],
+  "author": "Team Bill Tracker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AbortionAccessHackathon/naraltx-bill-tracker/issues"
+  },
+  "homepage": "https://github.com/AbortionAccessHackathon/naraltx-bill-tracker#readme",
+  "dependencies": {
+    "superagent": "^3.8.3"
+  }
+}
