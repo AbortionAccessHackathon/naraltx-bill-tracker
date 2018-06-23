@@ -8,8 +8,8 @@ const openstatesParams = {
   state: 'tx',
   search_window: 'session',
   sort: 'updated_at',
-  fields: 'bill_id,created_at,updated_at,title,session,action_dates,subjects',
-  subject: 'Reproductive Issues' // TODO URL for this document, last action
+  fields: 'bill_id,created_at,updated_at,title,session,action_dates,subjects,actions,versions',
+  // subject: 'Reproductive Issues' // TODO URL for this document, last action
 };
 
 const openstatesQuery = () => {
@@ -17,26 +17,33 @@ const openstatesQuery = () => {
     .query(openstatesParams)
     .then(function(response) {
       const shapedBills = response.body.map(bill => shapeBill(bill))
+      // console.log(response);
+      // console.log(response.body);
       console.log(shapedBills);
       return shapedBills;
     });
 }
 
-function shapeBill(bill) {
+const shapeBill = (bill) => {
   return { 
     title: bill.title,
     filed_date: bill.created_at,
-    updated_date: bill.updated_at,
     bill_id: bill.bill_id,
     session: bill.session,
-    last_status: null,
+    last_status: bill.actions[bill.actions.length - 1].action,
     last_updated: bill.updated_at,
-    bill_url: null,
-    subjects: bill.subjects,
+    bill_url: shapeBillUrl(bill),
+    // scratch: bill.actions.last.action,
   }
-} 
+}
+
+
+const shapeBillUrl = (bill) => {
+  // get url safely
+  if (bill.versions.length > 0) {
+    return bill.versions[bill.versions.length - 1].url;
+  }
+  return null;
+}
 
 openstatesQuery();
-
-// 'Reproductive Issues'
-// 'Sexual Orientation and Gender Issues'
