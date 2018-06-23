@@ -8,22 +8,25 @@ const openstatesParams = {
   state: 'tx',
   search_window: 'session',
   sort: 'updated_at',
-  fields: 'bill_id,created_at,updated_at,title,session,action_dates,subjects,actions,versions',
+  fields: 'bill_id,created_at,updated_at,title,session,subjects,actions,versions',
   subject: 'Reproductive Issues'
 };
 
 const openstatesQuery = () => {
-  const a = request.get(openstatesEndpoint)
+  // Query OpenStates API
+  const data = request.get(openstatesEndpoint)
     .query(openstatesParams)
     .then(function(response) {
       const shapedBills = response.body.map(bill => shapeBill(bill))
       console.log(shapedBills);
       return shapedBills;
     });
+  return data;
 }
 
 const shapeBill = (bill) => {
-  return { 
+  // Reduce raw data to just what we need
+  return {
     title: bill.title,
     filed_date: bill.created_at,
     bill_id: bill.bill_id,
@@ -36,7 +39,7 @@ const shapeBill = (bill) => {
 
 
 const shapeBillUrl = (bill) => {
-  // get url safely
+  // Safely get URL without crashing, since some bills don't have URLs for some reason?
   if (bill.versions.length > 0) {
     return bill.versions[bill.versions.length - 1].url;
   }
