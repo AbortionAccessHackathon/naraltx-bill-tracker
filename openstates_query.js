@@ -4,26 +4,27 @@ const { google }  = require('googleapis');
 const openstatesApiKey = '82e9cac0-93e7-496c-9a76-565ed6233fdc';
 const openstatesEndpoint = 'https://openstates.org/api/v1/bills';
 const searchWindow = ''
-const openstatesParams = {
-  apikey: openstatesApiKey,
-  state: 'tx',
-  search_window: 'session',
-  sort: 'updated_at',
-  fields: 'bill_id,created_at,updated_at,title,session,subjects,actions,versions',
-  subject: 'Reproductive Issues'
-};
 
-const openstatesQuery = () => {
+const openstatesQuery = (subj) => {
   // Query OpenStates API
   const data = request.get(openstatesEndpoint)
-    .query(openstatesParams)
+    .query(openstatesParams(subj))
     .then((response) => {
-      const shapedBills = response.body.map(bill => shapeBill(bill))
-      // console.log(shapedBills);
+      const shapedBills = response.body.map(bill => shapeBill(bill));
       return shapedBills;
     });
-    // ;
   return data;
+}
+
+const openstatesParams = (subj) => {
+  return {
+      apikey: openstatesApiKey,
+      state: 'tx',
+      search_window: 'session',
+      sort: 'updated_at',
+      fields: 'bill_id,created_at,updated_at,title,session,subjects,actions,versions',
+      subject: subj,
+  };
 }
 
 const shapeBill = (bill) => {
@@ -34,9 +35,19 @@ const shapeBill = (bill) => {
     title: bill.title,
     bill_url: shapeBillUrl(bill),
     filed_date: bill.created_at,
-    last_status: bill.actions[bill.actions.length - 1].action,
+    last_status: shapeAction(bill),
     last_updated: bill.updated_at,
+    // subjects: bill.subjects.join(', '),
   }
+}
+
+const shapeAction = (bill) => {
+  // Strip weird value of `Effective on . . . . . . . . . . . . . . .`
+  const action = bill.actions[bill.actions.length - 1].action;
+  if (action == 'Effective on . . . . . . . . . . . . . . .') {
+    return 'Completed'; // TK get better verbiage
+  }
+  return action;
 }
 
 const shapeBillUrl = (bill) => {
@@ -48,7 +59,6 @@ const shapeBillUrl = (bill) => {
 }
 
 // HERE'S THE SHEETS PART
-
 const appendToSheet = (valueSet) => {
   // Authorize
   const privatekey = require("/Users/colin/Downloads/Beater.json");
@@ -66,6 +76,7 @@ const appendToSheet = (valueSet) => {
    }
   });
 
+  // Ship to the sheet
   const sheets = google.sheets('v4');
   const googleSheetId = '1fO-vfsIkNuUnfFFiKtnp0pydHmsaLTFt1VgSvguDiAs';
   return sheets.spreadsheets.values.append({
@@ -80,7 +91,6 @@ const appendToSheet = (valueSet) => {
   });
 }
 
-
-openstatesQuery().then((set) => appendToSheet(set));
-
-
+['Reproductive Issues', 'Sexual Orientation and Gender Issues', 'Health', 'Family and Children Issues'].forEach((subj) => {
+  openstatesQuery(subj).then((set) => appendToSheet(set));
+})
