@@ -1,0 +1,23 @@
+
+.card{
+  position: relative; /* do not change */
+  background: #F2F2F2;
+  font: roboto;
+  font-size: 20;
+  margin: 5em;
+  height: 150px;
+}
+
+.urgent {
+  border: 2px solid red;
+}
+
+.top {
+  margin-bottom: 10px; /* do not change */
+}
+
+.bottom { 
+  padding: 10px;/* do not change */
+  bottom: 0px;/* do not change */
+  position: absolute;/* do not change */
+}
