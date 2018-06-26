@@ -7,7 +7,6 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "./openstates_query.js"
   },
   "repository": {
     "type": "git",
